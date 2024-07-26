@@ -268,7 +268,7 @@ class Experiment(object):
             im_d = torch.clamp(torch.permute(untransform(d_test[i,:,:,:]),(1,2,0)),min=0,max=1)
             plt.imshow(im_x.numpy())
             plt.axis("off")
-            plt.savefig(f"MeowImg/OriginalMeow{i}.png",bbox_inches = 'tight')
+            plt.savefig(f"CheckImg/OriginalMeow{i}.png",bbox_inches = 'tight')
 
             img = 255*im_x.numpy()
             img = img.astype(np.uint8)
@@ -280,7 +280,7 @@ class Experiment(object):
 
             plt.imshow(im_d.numpy())
             plt.axis("off")
-            plt.savefig(f"MeowImg/Meow_Clean{i}.png",bbox_inches = 'tight')
+            plt.savefig(f"CheckImg/Meow_Clean{i}.png",bbox_inches = 'tight')
 
             
             psnr = 10*torch.log10(im_x.shape[0]*im_x.shape[1]*im_x.shape[2]/torch.sum(torch.square(im_x-im_d)))
@@ -322,13 +322,13 @@ class Experiment(object):
             if plot is not None:
                 plot(self)
             
-            #with torch.no_grad():
-                #if ((self.epoch%10)==0):
+            with torch.no_grad():
+                if ((self.epoch%10)==0):
                     #for i in range(self.net.D + 2):
                     #    print(self.net.conv[i].weight)
-                    # for i in range(self.net.D + 2):
-                    #     wt = torch.nn.Parameter(LipConstrainLayer(self.net.conv[i].weight.data,self.net.n[i],0.95))
-                    #     self.net.conv[i].weight.data = 0.2*wt + 0.8*self.net.conv[i].weight.data
+                    for i in range(self.net.D + 2):
+                        wt = torch.nn.Parameter(LipConstrainLayer(self.net.conv[i].weight.data,self.net.n[i],0.95))
+                        self.net.conv[i].weight.data = 0.2*wt + 0.8*self.net.conv[i].weight.data
 
                     #for i in range(self.net.D + 2):
                     #    print(self.net.conv[i].weight)
@@ -346,7 +346,7 @@ class Experiment(object):
                     print(f"PSNR Img{i}: {psnr}")
                     plt.imshow(im_y.numpy())
                     plt.axis("off")
-                    plt.savefig(f"MeowImg/DenoisedMeow{i}-Epoch{epoch}.png",bbox_inches = 'tight')
+                    plt.savefig(f"CheckImg/DenoisedMeow{i}-Epoch{epoch}.png",bbox_inches = 'tight')
         
         for i in range(self.net.D + 2):
             print(f"Layer {i}:{computeLayerLipschitzFourier(self.net.conv[i].weight,self.net.n[i])}")

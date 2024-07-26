@@ -49,37 +49,7 @@ def run(args):
 
     clean = clean.crop([i, j, i+args.image_size[0], j+args.image_size[1]])
 
-    transform = tv.transforms.Compose([
-        # convert it to a tensor
-        tv.transforms.ToTensor(),
-        # normalize it to the range [−1, 1]
-        tv.transforms.Normalize((.5, .5, .5), (.5, .5, .5))
-    ])
 
-    untransform = tv.transforms.Compose([
-        # convert it to a tensor
-        #tv.transforms.ToTensor(),
-        # normalize it to the range [0, 1]
-        tv.transforms.Normalize((-0.5,-0.5, -0.5), (2, 2, 2))
-    ])
-
-    clean = transform(clean)
-    noisy = clean + 2 / 255 * args.sigma * torch.randn(clean.shape)
-    
-    plt.imshow(torch.clamp(torch.permute(clean,(1,2,0)),min=0,max=1).numpy())
-    plt.axis("off")
-    #plt.tight_layout()
-    plt.savefig("Meow.png",bbox_inches = 'tight')
-
-    noisy = untransform(noisy)
-    noisy = torch.permute(noisy,(1,2,0))
-    noisy = torch.clamp(noisy,min=0,max=1)
-    noisy = noisy.numpy()
-    #plt.imshow()
-    plt.imshow(noisy)
-    plt.axis("off")
-    #plt.tight_layout()
-    plt.savefig("NoisyMeow.png",bbox_inches = 'tight')
     # experiment
     exp = nt.Experiment(net, train_set, test_set, adam, stats_manager, batch_size=args.batch_size,
                         output_dir=args.output_dir, perform_validation_during_training=True)
